@@ -12,7 +12,7 @@ torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 
 # Preprocessing using preserved HU in dilated part of mask
-BASE = '/home/Chen_hongyu/lung_nodule_dataset/BMP_ALL/' # make sure you have the ending '/'
+BASE = '1.25mm_3D_detection_bmp/' # make sure you have the ending '/'
 data_config = {
     # directory for putting all preprocessed results for training to this path
     'preprocessed_data_dir': BASE + 'imgs',
@@ -123,8 +123,8 @@ elif train_config['optimizer'] == 'RMSprop':
 
 train_config['RESULTS_DIR'] = os.path.join(train_config['ROOT_DIR'], 'results')
 train_config['out_dir'] = os.path.join(train_config['RESULTS_DIR'], 'full02')
-# train_config['initial_checkpoint'] = '/home/Chen_hongyu/ThreeStage_Model/ThreeStage_Model/RepLKNet_test/nodule_detection/PN9/results/full02/model/model.ckpt' #
-train_config['initial_checkpoint'] = '/home/Chen_hongyu/ThreeStage_Model/ThreeStage_Model/RepLKNet_test/nodule_detection/PN9/results/full02/model/1950.ckpt'  # 不载入预训练权重且batch_size=16，val tpr有值, 但没用
+# train_config['initial_checkpoint'] = model.ckpt' #
+train_config['initial_checkpoint'] = '1950.ckpt'  #
 
 config = dict(data_config, **net_config)
 config = dict(config, **train_config)
