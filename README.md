@@ -32,7 +32,6 @@ https://doi.org/10.5281/zenodo.12582356
 * data_path is the unzip raw data path for “1.25_or_5mm_3D_detection_mhd”.
 * preprocess_result_path is the save path for the preprocessing.
 * annos_path is the path for annotations.
-* 
 
 ## 3.  1.25_or_5mm_3D_detection_mhd
 ### Data acquisition
