@@ -31,24 +31,24 @@ if __name__ == '__main__':
                                    transforms.ToTensor(),
                                    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])}
 
-    # train_dataset = datasets.ImageFolder("F:/class_dataset/archive/training/training/", transform=data_transform["train"])  # 训练集数据
+    # train_dataset = datasets.ImageFolder("F:/class_dataset/archive/training/training/", transform=data_transform["train"])  # train data
 
     train_dataset = datasets.ImageFolder("class_dataset/train/",
-                                         transform=data_transform["train"])  # 训练集数据
+                                         transform=data_transform["train"])   # train data
     train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True,
-                                               num_workers=4)  # 加载数据
+                                               num_workers=4) 
     len_train = len(train_dataset)
-    # val_dataset = datasets.ImageFolder("F:/class_dataset/archive/validation/validation/", transform=data_transform["val"])  # 测试集数据
+    # val_dataset = datasets.ImageFolder("F:/class_dataset/archive/validation/validation/", transform=data_transform["val"])  #test data
     val_dataset = datasets.ImageFolder("class_dataset/validate/",
-                                       transform=data_transform["val"])  # 测试集数据
+                                       transform=data_transform["val"])   #test data
 
     val_loader = torch.utils.data.DataLoader(dataset=val_dataset, batch_size=BATCH_SIZE, shuffle=False,
-                                             num_workers=1)  # 加载数据
+                                             num_workers=1) 
     len_val = len(val_dataset)
 
     net = resnet34()
-    loss_function = nn.CrossEntropyLoss()  # 设置损失函数
-    optimizer = optim.Adam(net.parameters(), lr=0.0001)  # 设置优化器和学习率
+    loss_function = nn.CrossEntropyLoss() 
+    optimizer = optim.Adam(net.parameters(), lr=0.0001) 
     epoch = 60000
 
 
