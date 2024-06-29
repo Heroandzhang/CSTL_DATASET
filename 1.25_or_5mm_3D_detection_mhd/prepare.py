@@ -22,6 +22,8 @@ from functools import partial
 
 import warnings
 
+
+
 def resample(imgs, spacing, new_spacing,order=2):
     if len(imgs.shape)==3:
         new_shape = np.round(imgs.shape * spacing / new_spacing)
@@ -489,6 +491,14 @@ def splitvaltestcsv():
     valf.close()
 
 def savenpy_luna(id, annos, filelist, luna_segment, luna_data,savepath):
+    #1. Load the raw data and the mask, using the load_itk_image function
+    #2. take the boundary of the mask, i.e. the edge of the non-zero part, find a box, and then apply a new resolution to it, i.e. resample, to unify the resolution, the function used is resample
+    #3. clip the data to -1200~600, the data outside this range is set to -1200 or 600, and then normalize the data to 0~255, using the lum_trans function.
+    #4. Perform an expansion operation on the mask to remove the small voids in the lungs, using the function process_mask, and then apply a new mask to the raw data and value the data outside the mask at 170 (the new value of the water HU value normalized)
+    #5. resample the raw data and then intercept the data inside the box
+    #6. read the label, convert it to voxel coordinates, the function used is worldToVoxelCoord, and then apply a new resolution to it, and finally note that the data is inside the box, so the coordinates are relative to the box coordinates.
+    #7. Store the preprocessed data and labels in .npy format
+   
     islabel = True
     isClean = True
     resolution = np.array([1,1,1])
@@ -568,29 +578,30 @@ def savenpy_luna(id, annos, filelist, luna_segment, luna_data,savepath):
         
     print(name)
 
+#The entire code for preprocessing, which calls other functions, the main process is for each CT image stored in .mhd format
 def preprocess_luna():
-    luna_segment = config['luna_segment']
-    savepath = config['preprocess_result_path']
-    luna_data = config['luna_data']
-    luna_label = config['luna_label']
-    finished_flag = '.flag_preprocessluna'
+    luna_segment = config['luna_segment'] #Path where the CT mask is stored
+    savepath = config['preprocess_result_path'] #Path where preprocessed data is stored
+    luna_data = config['luna_data']  # raw data, mhd path
+    luna_label = config['luna_label'] #Store files for all case labels
+    finished_flag = '.flag_preprocessluna'#Flag for whether it has been preprocessed
     print('starting preprocessing luna')
     if not os.path.exists(finished_flag):
         annos = np.array(pandas.read_csv(luna_label))
         pool = Pool()
         if not os.path.exists(savepath):
             os.mkdir(savepath)
-        for setidx in xrange(10):
-            print 'process subset', setidx
-            filelist = [f.split('.mhd')[0] for f in os.listdir(luna_data+'subset'+str(setidx)) if f.endswith('.mhd') ]
-            if not os.path.exists(savepath+'subset'+str(setidx)):
-                os.mkdir(savepath+'subset'+str(setidx))
-            partial_savenpy_luna = partial(savenpy_luna, annos=annos, filelist=filelist,
-                                       luna_segment=luna_segment, luna_data=luna_data+'subset'+str(setidx)+'/', 
-                                       savepath=savepath+'subset'+str(setidx)+'/')
-            N = len(filelist)
-            #savenpy(1)
-            _=pool.map(partial_savenpy_luna,range(N))
+     
+        print 'process subset', setidx
+        filelist = [f.split('.mhd')[0] for f in os.listdir(luna_data+'subset'+str(setidx)) if f.endswith('.mhd') ]
+        if not os.path.exists(savepath+str(setidx)):
+            os.mkdir(savepath+str(setidx))  #Create folders with preprocessing results for each data
+        partial_savenpy_luna = partial(savenpy_luna, annos=annos, filelist=filelist,
+                                   luna_segment=luna_segment, luna_data=luna_data+str(setidx)+'/', 
+                                   savepath=savepath+str(setidx)+'/')
+        N = len(filelist)
+        #savenpy(1)
+        _=pool.map(partial_savenpy_luna,range(N))
         pool.close()
         pool.join()
     print('end preprocessing luna')
