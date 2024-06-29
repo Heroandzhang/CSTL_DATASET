@@ -31,7 +31,7 @@ parser.add_argument('--net', '-m', metavar='NET', default=config['net'],
                     help='neural net')
 parser.add_argument("--mode", type=str, default = 'eval',
                     help="you want to test or val")
-parser.add_argument("--weight", type=str, default='/home/Chen_hongyu/ThreeStage_Model/ThreeStage_Model/RepLKNet_test/nodule_detection/PN9/results/full02/model/1150.ckpt',
+parser.add_argument("--weight", type=str, default='1150.ckpt',
                     help="path to model weights to be used")
 parser.add_argument("--dicom-path", type=str, default=None,
                     help="path to dicom files of patient")
@@ -138,11 +138,11 @@ def eval(net, dataset, save_dir=None):
     if not os.path.exists(os.path.join(eval_dir, 'res')):
         os.makedirs(os.path.join(eval_dir, 'res'))
 
-    # annotations_filename = '/home/media/ssd/process_zoom/split_full_with_nodule_9classes/test_anno_center.csv'
-    annotations_filename = '/home/Chen_hongyu/lung_nodule_dataset/BMP_ALL/anno_val.csv'
-   # test_anno_center.csv is a csv file with 'center_x','center_y','center_z', and 'diameter'. You can obtain these parameters by using 'xmin', 'xmax', etc.
-    # val_path = '/home/media/ssd/process_zoom/split_full_with_nodule_9classes/test.txt'
-    val_path = '/home/Chen_hongyu/lung_nodule_dataset/BMP_ALL/val.txt'
+    # annotations_filename = 'test_anno_center.csv'
+    annotations_filename = '1.25mm_3D_detection_bmp/anno_val.csv'
+    # test_anno_center.csv is a csv file with 'center_x','center_y','center_z', and 'diameter'. You can obtain these parameters by using 'xmin', 'xmax', etc.
+
+    val_path = '1.25mm_3D_detection_bmp/val.txt'
 
     noduleCADEvaluation(annotations_filename, res_path, val_path, os.path.join(eval_dir, 'res'))
 
